@@ -51,9 +51,9 @@ regr_white = linear_model.LinearRegression()
 regr_red.fit(wineRed_X_train, wineRed_y_train)
 regr_white.fit(wineWhite_X_train, wineWhite_y_train)
 
-# Define features for the consumer-only model (pH, sulphates, alcohol)
-wineRed_consumer_X = wineRed_X[:, [8, 9, 10]]
-wineWhite_consumer_X = wineWhite_X[:, [8, 9, 10]]
+# Define features for the consumer-only model (residual sugar (RS), pH, sulphates, alcohol)
+wineRed_consumer_X = wineRed_X[:, [3, 8, 9, 10]]
+wineWhite_consumer_X = wineWhite_X[:, [3, 8, 9, 10]]
 
 # Split the consumer data into training/testing sets
 wineRed_consumer_X_train, wineRed_consumer_X_test, wineRed_consumer_y_train, wineRed_consumer_y_test = train_test_split(wineRed_consumer_X, wineRed_y, test_size=0.3)
