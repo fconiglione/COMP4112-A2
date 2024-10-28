@@ -123,6 +123,7 @@ print("Red Wine Consumer-Only Model F-Statistic p-value: ", model_red_consumer.f
 print("-------------------")
 
 # White Wine Consumer-Only Model Performance
+# Note: I added a fourth regression model because I wanted to show the performance of the consumer-only model for red AND white wine
 print("White Wine Consumer-Only Model Performance:")
 print("Coefficients:", regr_consumer_white.coef_)
 print("MSE: %.2f" % mean_squared_error(wineWhite_consumer_y_test, wineWhite_consumer_y_pred))
