@@ -55,22 +55,23 @@ regr_white.fit(wineWhite_X_train, wineWhite_y_train)
 wineRed_consumer_X = wineRed_X[:, [8, 9, 10]]
 wineWhite_consumer_X = wineWhite_X[:, [8, 9, 10]]
 
-# Split the consumer data into training/testing sets
-wineRed_consumer_X_train, wineRed_consumer_X_test, wineRed_consumer_y_train, wineRed_consumer_y_test = train_test_split(wineRed_consumer_X, wineRed_y, test_size=0.3)
-wineWhite_consumer_X_train, wineWhite_consumer_X_test, wineWhite_consumer_y_train, wineWhite_consumer_y_test = train_test_split(wineWhite_consumer_X, wineWhite_y, test_size=0.3)
+# Second submission: combine the consumer data for red and white wine
+# Referenced resources for combining array data: https://python.plainenglish.io/numpy-84fc03f7cb01
+combined_consumer_X = np.vstack((wineRed_consumer_X, wineWhite_consumer_X))
+combined_consumer_y = np.hstack((wineRed_y, wineWhite_y))
 
-# Train the consumer-only model
-regr_consumer_red = linear_model.LinearRegression()
-regr_consumer_red.fit(wineRed_consumer_X_train, wineRed_consumer_y_train)
+# Second submission: Train test split for the combined consumer data
+combined_consumer_X_train, combined_consumer_X_test, combined_consumer_y_train, combined_consumer_y_test = train_test_split(combined_consumer_X, combined_consumer_y, test_size=0.3)
 
-regr_consumer_white = linear_model.LinearRegression()
-regr_consumer_white.fit(wineWhite_consumer_X_train, wineWhite_consumer_y_train)
+# Second submission: Train the new consumer-only model
+regr_consumer_combined = linear_model.LinearRegression()
+regr_consumer_combined.fit(combined_consumer_X_train, combined_consumer_y_train)
 
 # Make predictions using the testing set
 wineRed_y_pred = regr_red.predict(wineRed_X_test)
 wineWhite_y_pred = regr_white.predict(wineWhite_X_test)
-wineRed_consumer_y_pred = regr_consumer_red.predict(wineRed_consumer_X_test)
-wineWhite_consumer_y_pred = regr_consumer_white.predict(wineWhite_consumer_X_test)
+# Second submission: Make predictions for the new combined consumer model
+combined_consumer_y_pred = regr_consumer_combined.predict(combined_consumer_X_test)
 
 """
 Report on the performance of these models in Python with R^2 or MSE. Other measures can
@@ -107,30 +108,14 @@ print("White Wine Model F-Statistic p-value: ", model_white.f_pvalue)
 # Divider
 print("-------------------")
 
-# Red Wine Consumer-Only Model Performance
-print("Red Wine Consumer-Only Model Performance:")
-print("Coefficients:", regr_consumer_red.coef_)
-print("MSE: %.2f" % mean_squared_error(wineRed_consumer_y_test, wineRed_consumer_y_pred))
-print("R^2: %.2f" % r2_score(wineRed_consumer_y_test, wineRed_consumer_y_pred))
+# Combined Consumer Model Performance
+print("Consumer Combined Wine Model Performance:")
+print("Coefficients:", regr_consumer_combined.coef_)
+print("MSE: %.2f" % mean_squared_error(combined_consumer_y_test, combined_consumer_y_pred))
+print("R^2: %.2f" % r2_score(combined_consumer_y_test, combined_consumer_y_pred))
 
-wineRed_consumer_X_train_const = sm.add_constant(wineRed_consumer_X_train)
-model_red_consumer = sm.OLS(wineRed_consumer_y_train, wineRed_consumer_X_train_const).fit()
+combined_consumer_X_train_const = sm.add_constant(combined_consumer_X_train)
+model_combined_consumer = sm.OLS(combined_consumer_y_train, combined_consumer_X_train_const).fit()
 
-print("Red Wine Consumer-Only Model F-Statistic: %.2f" % model_red_consumer.fvalue)
-print("Red Wine Consumer-Only Model F-Statistic p-value: ", model_red_consumer.f_pvalue)
-
-# Divider
-print("-------------------")
-
-# White Wine Consumer-Only Model Performance
-# Note: I added a fourth regression model because I wanted to show the performance of the consumer-only model for red AND white wine
-print("White Wine Consumer-Only Model Performance:")
-print("Coefficients:", regr_consumer_white.coef_)
-print("MSE: %.2f" % mean_squared_error(wineWhite_consumer_y_test, wineWhite_consumer_y_pred))
-print("R^2: %.2f" % r2_score(wineWhite_consumer_y_test, wineWhite_consumer_y_pred))
-
-wineWhite_consumer_X_train_const = sm.add_constant(wineWhite_consumer_X_train)
-model_white_consumer = sm.OLS(wineWhite_consumer_y_train, wineWhite_consumer_X_train_const).fit()
-
-print("White Wine Consumer-Only Model F-Statistic: %.2f" % model_white_consumer.fvalue)
-print("White Wine Consumer-Only Model F-Statistic p-value: ", model_white_consumer.f_pvalue)
+print("Consumer Combined Wine Model F-Statistic: %.2f" % model_combined_consumer.fvalue)
+print("Consumer Combined Wine Model F-Statistic p-value: ", model_combined_consumer.f_pvalue)
